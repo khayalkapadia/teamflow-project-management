@@ -1,0 +1,200 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Remove Member | {{ project.name }}
+{% endblock %}
+
+{% block content %}
+
+<style>
+
+    .remove-page {
+        max-width: 580px;
+        margin: 45px auto;
+    }
+
+    .remove-card {
+        background: white;
+        border: 1px solid #fecaca;
+        border-radius: 13px;
+
+        padding: 30px;
+
+        box-shadow: 0 8px 25px rgba(15, 23, 42, 0.06);
+    }
+
+    .remove-icon {
+        width: 50px;
+        height: 50px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        margin-bottom: 18px;
+
+        border-radius: 50%;
+
+        background: #fef2f2;
+        color: #dc2626;
+
+        font-size: 20px;
+        font-weight: bold;
+    }
+
+    .remove-card h1 {
+        color: #111827;
+        font-size: 25px;
+    }
+
+    .member-name {
+        margin-top: 20px;
+
+        color: #334155;
+        font-size: 17px;
+        font-weight: 700;
+    }
+
+    .remove-message {
+        margin-top: 9px;
+
+        color: #64748b;
+        font-size: 14px;
+        line-height: 1.7;
+    }
+
+    .remove-actions {
+        display: flex;
+        gap: 10px;
+
+        margin-top: 25px;
+        padding-top: 20px;
+
+        border-top: 1px solid #eef2f7;
+    }
+
+    .remove-button {
+        border: none;
+        border-radius: 8px;
+
+        padding: 11px 16px;
+
+        background: #dc2626;
+        color: white;
+
+        font-family: inherit;
+        font-size: 13px;
+        font-weight: 700;
+
+        cursor: pointer;
+    }
+
+    .remove-button:hover {
+        background: #b91c1c;
+    }
+
+    .cancel-button {
+        display: inline-flex;
+        align-items: center;
+
+        padding: 10px 15px;
+
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+
+        background: white;
+        color: #475569;
+
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .cancel-button:hover {
+        background: #f8fafc;
+    }
+
+    @media (max-width: 600px) {
+
+        .remove-page {
+            margin: 20px auto;
+        }
+
+        .remove-card {
+            padding: 22px;
+        }
+
+        .remove-actions {
+            flex-direction: column;
+        }
+
+        .remove-button,
+        .cancel-button {
+            width: 100%;
+            justify-content: center;
+        }
+
+    }
+
+</style>
+
+
+<div class="remove-page">
+
+    <div class="remove-card">
+
+        <div class="remove-icon">
+            !
+        </div>
+
+
+        <h1>
+            Remove Member
+        </h1>
+
+
+        <div class="member-name">
+            {{ member.user.username }}
+        </div>
+
+
+        <p class="remove-message">
+
+            Are you sure you want to remove
+            <strong>{{ member.user.username }}</strong>
+            from <strong>{{ project.name }}</strong>?
+
+            They will no longer have access to this project as a member.
+
+        </p>
+
+
+        <form
+            method="POST"
+            class="remove-actions"
+        >
+
+            {% csrf_token %}
+
+
+            <button
+                type="submit"
+                class="remove-button"
+            >
+                Yes, Remove Member
+            </button>
+
+
+            <a
+                href="{% url 'project_members' project.id %}"
+                class="cancel-button"
+            >
+                Cancel
+            </a>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

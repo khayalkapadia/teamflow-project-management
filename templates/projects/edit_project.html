@@ -1,0 +1,507 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Edit {{ project.name }} | TeamFlow
+{% endblock %}
+
+{% block content %}
+
+<style>
+
+    .edit-project-page {
+        max-width: 850px;
+        margin: 0 auto;
+    }
+
+    /* Header */
+
+    .edit-project-header {
+        margin-bottom: 28px;
+    }
+
+    .edit-project-header h1 {
+        margin: 0;
+        font-size: 30px;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+        color: #111827;
+    }
+
+    .edit-project-header p {
+        margin-top: 8px;
+        color: #64748b;
+        font-size: 15px;
+    }
+
+    /* Main card */
+
+    .edit-project-card {
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        padding: 30px;
+        box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+    }
+
+    .form-section-title {
+        margin-bottom: 22px;
+    }
+
+    .form-section-title h2 {
+        margin: 0;
+        font-size: 19px;
+        color: #111827;
+    }
+
+    .form-section-title p {
+        margin-top: 5px;
+        color: #64748b;
+        font-size: 13px;
+    }
+
+    /* Error */
+
+    .form-error {
+        margin-bottom: 22px;
+        padding: 12px 14px;
+        border: 1px solid #fecaca;
+        border-radius: 8px;
+        background: #fef2f2;
+        color: #b91c1c;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    /* Form layout */
+
+    .project-form {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+    }
+
+    .form-group label {
+        margin-bottom: 7px;
+        color: #334155;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+        width: 100%;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        background: #ffffff;
+        color: #111827;
+        font-family: inherit;
+        font-size: 14px;
+        outline: none;
+        transition: border-color 0.15s ease,
+                    box-shadow 0.15s ease;
+    }
+
+    .form-group input,
+    .form-group select {
+        height: 44px;
+        padding: 0 12px;
+    }
+
+    .form-group textarea {
+        min-height: 125px;
+        padding: 12px;
+        resize: vertical;
+        line-height: 1.5;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.10);
+    }
+
+    .form-group input::placeholder,
+    .form-group textarea::placeholder {
+        color: #94a3b8;
+    }
+
+    .form-help {
+        margin-top: 6px;
+        color: #94a3b8;
+        font-size: 12px;
+    }
+
+    /* Form divider */
+
+    .form-divider {
+        height: 1px;
+        background: #eef2f7;
+        margin: 3px 0;
+    }
+
+    /* Buttons */
+
+    .form-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 5px;
+        padding-top: 5px;
+    }
+
+    .save-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 42px;
+        padding: 10px 18px;
+        border: 1px solid #2563eb;
+        border-radius: 8px;
+        background: #2563eb;
+        color: #ffffff;
+        font-family: inherit;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.15s ease;
+    }
+
+    .save-button:hover {
+        background: #1d4ed8;
+        border-color: #1d4ed8;
+        transform: translateY(-1px);
+    }
+
+    .cancel-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 42px;
+        padding: 10px 17px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        background: #ffffff;
+        color: #475569;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.15s ease;
+    }
+
+    .cancel-button:hover {
+        background: #f8fafc;
+        border-color: #cbd5e1;
+    }
+
+    /* Back link */
+
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        margin-top: 20px;
+        color: #64748b;
+        font-size: 13px;
+        text-decoration: none;
+    }
+
+    .back-link:hover {
+        color: #2563eb;
+        text-decoration: underline;
+    }
+
+    /* Responsive */
+
+    @media (max-width: 700px) {
+
+        .edit-project-page {
+            max-width: 100%;
+        }
+
+        .edit-project-card {
+            padding: 22px;
+        }
+
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+
+        .edit-project-header h1 {
+            font-size: 26px;
+        }
+
+    }
+
+    @media (max-width: 480px) {
+
+        .edit-project-card {
+            padding: 18px;
+        }
+
+        .form-actions {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .save-button,
+        .cancel-button {
+            width: 100%;
+        }
+
+    }
+
+</style>
+
+
+<div class="edit-project-page">
+
+    <div class="edit-project-header">
+
+        <h1>
+            Edit Project
+        </h1>
+
+        <p>
+            Update the information and settings for
+            <strong>{{ project.name }}</strong>.
+        </p>
+
+    </div>
+
+
+    <div class="edit-project-card">
+
+        <div class="form-section-title">
+
+            <h2>
+                Project Details
+            </h2>
+
+            <p>
+                Keep your project information up to date.
+            </p>
+
+        </div>
+
+
+        {% if error %}
+
+            <div class="form-error">
+                {{ error }}
+            </div>
+
+        {% endif %}
+
+
+        <form method="POST" class="project-form">
+
+            {% csrf_token %}
+
+
+            <div class="form-group">
+
+                <label for="name">
+                    Project Name
+                </label>
+
+                <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    value="{{ project.name }}"
+                    placeholder="Enter project name"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="description">
+                    Description
+                </label>
+
+                <textarea
+                    id="description"
+                    name="description"
+                    placeholder="Describe your project..."
+                >{{ project.description }}</textarea>
+
+                <div class="form-help">
+                    Provide a short description to help your team understand the project.
+                </div>
+
+            </div>
+
+
+            <div class="form-row">
+
+                <div class="form-group">
+
+                    <label for="start_date">
+                        Start Date
+                    </label>
+
+                    <input
+                        type="date"
+                        id="start_date"
+                        name="start_date"
+                        value="{{ project.start_date|date:'Y-m-d' }}"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="due_date">
+                        Due Date
+                    </label>
+
+                    <input
+                        type="date"
+                        id="due_date"
+                        name="due_date"
+                        value="{{ project.due_date|date:'Y-m-d' }}"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="form-divider"></div>
+
+
+            <div class="form-row">
+
+                <div class="form-group">
+
+                    <label for="status">
+                        Project Status
+                    </label>
+
+                    <select
+                        id="status"
+                        name="status"
+                    >
+
+                        <option
+                            value="planning"
+                            {% if project.status == "planning" %}selected{% endif %}
+                        >
+                            Planning
+                        </option>
+
+                        <option
+                            value="active"
+                            {% if project.status == "active" %}selected{% endif %}
+                        >
+                            Active
+                        </option>
+
+                        <option
+                            value="on_hold"
+                            {% if project.status == "on_hold" %}selected{% endif %}
+                        >
+                            On Hold
+                        </option>
+
+                        <option
+                            value="completed"
+                            {% if project.status == "completed" %}selected{% endif %}
+                        >
+                            Completed
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="priority">
+                        Priority
+                    </label>
+
+                    <select
+                        id="priority"
+                        name="priority"
+                    >
+
+                        <option
+                            value="low"
+                            {% if project.priority == "low" %}selected{% endif %}
+                        >
+                            Low
+                        </option>
+
+                        <option
+                            value="medium"
+                            {% if project.priority == "medium" %}selected{% endif %}
+                        >
+                            Medium
+                        </option>
+
+                        <option
+                            value="high"
+                            {% if project.priority == "high" %}selected{% endif %}
+                        >
+                            High
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-actions">
+
+                <button
+                    type="submit"
+                    class="save-button"
+                >
+                    Save Changes
+                </button>
+
+
+                <a
+                    href="{% url 'project_detail' project.id %}"
+                    class="cancel-button"
+                >
+                    Cancel
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    <a
+        href="{% url 'project_detail' project.id %}"
+        class="back-link"
+    >
+        ← Back to Project
+    </a>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,439 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Profile | TeamFlow
+{% endblock %}
+
+{% block content %}
+
+<style>
+
+    .profile-page {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    .profile-header {
+        margin-bottom: 28px;
+    }
+
+    .profile-header h1 {
+        margin: 0;
+        font-size: 30px;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+        color: #111827;
+    }
+
+    .profile-header p {
+        margin-top: 8px;
+        color: #64748b;
+        font-size: 15px;
+    }
+
+    .profile-card {
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        padding: 30px;
+        box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+    }
+
+    .profile-top {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        margin-bottom: 30px;
+        padding-bottom: 25px;
+        border-bottom: 1px solid #eef2f7;
+    }
+
+    .profile-avatar {
+        width: 68px;
+        height: 68px;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: #111827;
+        color: #ffffff;
+        font-size: 24px;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .profile-user-info h2 {
+        margin: 0;
+        font-size: 19px;
+        color: #111827;
+    }
+
+    .profile-user-info p {
+        margin-top: 5px;
+        color: #64748b;
+        font-size: 13px;
+    }
+
+    .profile-form {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-group label {
+        margin-bottom: 7px;
+        color: #334155;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .form-group input {
+        width: 100%;
+        max-width: 560px;
+        height: 44px;
+        padding: 0 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        background: #ffffff;
+        color: #111827;
+        font-family: inherit;
+        font-size: 14px;
+        outline: none;
+        transition: border-color 0.15s ease,
+                    box-shadow 0.15s ease;
+    }
+
+    .form-group input:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.10);
+    }
+
+    .form-help {
+        margin-top: 6px;
+        color: #94a3b8;
+        font-size: 12px;
+    }
+
+    .account-info {
+        padding: 15px 16px;
+        border: 1px solid #e5e7eb;
+        border-radius: 9px;
+        background: #f8fafc;
+    }
+
+    .account-info-label {
+        color: #64748b;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+    }
+
+    .account-info-value {
+        margin-top: 5px;
+        color: #334155;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .error-message {
+        margin-bottom: 22px;
+        padding: 13px 15px;
+        border: 1px solid #fecaca;
+        border-radius: 8px;
+        background: #fef2f2;
+        color: #b91c1c;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .profile-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 2px;
+        padding-top: 5px;
+    }
+
+    .save-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 42px;
+        padding: 10px 18px;
+        border: 1px solid #2563eb;
+        border-radius: 8px;
+        background: #2563eb;
+        color: #ffffff;
+        font-family: inherit;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.15s ease;
+    }
+
+    .save-button:hover {
+        background: #1d4ed8;
+        border-color: #1d4ed8;
+        transform: translateY(-1px);
+    }
+
+    .security-card {
+        margin-top: 20px;
+        padding: 25px 30px;
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+    }
+
+    .security-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 20px;
+    }
+
+    .security-header h2 {
+        margin: 0;
+        font-size: 18px;
+        color: #111827;
+    }
+
+    .security-header p {
+        margin-top: 6px;
+        color: #64748b;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    .security-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        min-height: 40px;
+        padding: 9px 15px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        background: #ffffff;
+        color: #475569;
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.15s ease;
+    }
+
+    .security-button:hover {
+        background: #f8fafc;
+        border-color: #cbd5e1;
+        color: #111827;
+    }
+
+    .back-link {
+        display: inline-flex;
+        margin-top: 20px;
+        color: #64748b;
+        font-size: 13px;
+        text-decoration: none;
+    }
+
+    .back-link:hover {
+        color: #2563eb;
+        text-decoration: underline;
+    }
+
+    @media (max-width: 650px) {
+
+        .profile-card {
+            padding: 22px;
+        }
+
+        .security-card {
+            padding: 22px;
+        }
+
+        .security-header {
+            flex-direction: column;
+        }
+
+        .security-button {
+            width: 100%;
+        }
+
+        .profile-actions {
+            align-items: stretch;
+        }
+
+        .save-button {
+            width: 100%;
+        }
+
+    }
+
+</style>
+
+
+<div class="profile-page">
+
+    <div class="profile-header">
+
+        <h1>
+            Profile
+        </h1>
+
+        <p>
+            Manage your TeamFlow account information.
+        </p>
+
+    </div>
+
+
+    <div class="profile-card">
+
+        <div class="profile-top">
+
+            <div class="profile-avatar">
+                {{ user.username|first }}
+            </div>
+
+            <div class="profile-user-info">
+
+                <h2>
+                    {{ user.username }}
+                </h2>
+
+                <p>
+                    TeamFlow account
+                </p>
+
+            </div>
+
+        </div>
+
+
+        {% if error %}
+
+            <div class="error-message">
+                {{ error }}
+            </div>
+
+        {% endif %}
+
+
+        <form method="POST" class="profile-form">
+
+            {% csrf_token %}
+
+
+            <div class="form-group">
+
+                <label for="username">
+                    Username
+                </label>
+
+                <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    value="{{ user.username }}"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="email">
+                    Email Address
+                </label>
+
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value="{{ user.email }}"
+                >
+
+                <div class="form-help">
+                    This email address is associated with your TeamFlow account.
+                </div>
+
+            </div>
+
+
+            <div class="account-info">
+
+                <div class="account-info-label">
+                    Account Created
+                </div>
+
+                <div class="account-info-value">
+                    {{ user.date_joined|date:"d M Y" }}
+                </div>
+
+            </div>
+
+
+            <div class="profile-actions">
+
+                <button
+                    type="submit"
+                    class="save-button"
+                >
+                    Save Changes
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    <div class="security-card">
+
+        <div class="security-header">
+
+            <div>
+
+                <h2>
+                    Security
+                </h2>
+
+                <p>
+                    Keep your account secure by regularly updating your password.
+                </p>
+
+            </div>
+
+
+            <a
+                href="{% url 'change_password' %}"
+                class="security-button"
+            >
+                Change Password →
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <a
+        href="{% url 'dashboard' %}"
+        class="back-link"
+    >
+        ← Back to Dashboard
+    </a>
+
+</div>
+
+{% endblock %}

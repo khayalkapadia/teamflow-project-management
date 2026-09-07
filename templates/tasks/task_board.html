@@ -1,0 +1,676 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {{ project.name }} | Tasks | TeamFlow
+{% endblock %}
+
+{% block content %}
+
+<style>
+
+    .task-page {
+        max-width: 1300px;
+        margin: 0 auto;
+    }
+
+    .task-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        gap: 20px;
+        margin-bottom: 24px;
+    }
+
+    .task-header h1 {
+        margin: 0;
+        color: #111827;
+        font-size: 30px;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+    }
+
+    .task-header p {
+        margin-top: 7px;
+        color: #64748b;
+        font-size: 14px;
+    }
+
+    .header-actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .header-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 40px;
+        padding: 9px 14px;
+        border: 1px solid #d1d5db;
+        border-radius: 7px;
+        background: #ffffff;
+        color: #475569;
+        font-size: 12px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: 0.15s ease;
+    }
+
+    .header-button:hover {
+        background: #f8fafc;
+        border-color: #cbd5e1;
+    }
+
+    .create-task-btn {
+        border-color: #2563eb;
+        background: #2563eb;
+        color: #ffffff;
+    }
+
+    .create-task-btn:hover {
+        border-color: #1d4ed8;
+        background: #1d4ed8;
+    }
+
+    .board-summary {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+        margin-bottom: 22px;
+    }
+
+    .summary-card {
+        padding: 18px 20px;
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03);
+    }
+
+    .summary-card h3 {
+        margin: 0;
+        color: #64748b;
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .summary-number {
+        margin-top: 10px;
+        color: #111827;
+        font-size: 27px;
+        font-weight: 700;
+    }
+
+    .kanban-board {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+        align-items: start;
+    }
+
+    .kanban-column {
+        min-height: 470px;
+        padding: 15px;
+        border: 1px solid #e2e8f0;
+        border-radius: 11px;
+        background: #f8fafc;
+    }
+
+    .column-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 3px 2px 14px;
+    }
+
+    .column-header h2 {
+        margin: 0;
+        color: #334155;
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    .task-count {
+        min-width: 25px;
+        height: 25px;
+        padding: 0 7px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        background: #ffffff;
+        color: #64748b;
+        font-size: 10px;
+        font-weight: 700;
+    }
+
+    .task-card {
+        padding: 15px;
+        margin-bottom: 10px;
+        border: 1px solid #e5e7eb;
+        border-radius: 9px;
+        background: #ffffff;
+        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03);
+        transition: 0.15s ease;
+    }
+
+    .task-card:last-child {
+        margin-bottom: 0;
+    }
+
+    .task-card:hover {
+        border-color: #cbd5e1;
+        transform: translateY(-1px);
+        box-shadow: 0 5px 12px rgba(15, 23, 42, 0.06);
+    }
+
+    .task-card h3 {
+        margin: 0;
+        color: #111827;
+        font-size: 14px;
+        line-height: 1.4;
+    }
+
+    .task-card h3 a:hover {
+        color: #2563eb;
+    }
+
+    .task-description {
+        margin-top: 7px;
+        color: #64748b;
+        font-size: 11px;
+        line-height: 1.5;
+    }
+
+    .task-badges {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        margin-top: 11px;
+    }
+
+    .badge {
+        display: inline-flex;
+        align-items: center;
+        min-height: 22px;
+        padding: 3px 7px;
+        border-radius: 5px;
+        background: #f1f5f9;
+        color: #475569;
+        font-size: 9px;
+        font-weight: 700;
+    }
+
+    .task-meta {
+        margin-top: 11px;
+        padding-top: 10px;
+        border-top: 1px solid #f1f5f9;
+        color: #64748b;
+        font-size: 10px;
+        line-height: 1.8;
+    }
+
+    .task-meta strong {
+        color: #475569;
+        font-weight: 600;
+    }
+
+    .due-overdue {
+        color: #dc2626;
+        font-weight: 700;
+    }
+
+    .due-completed {
+        color: #15803d;
+        font-weight: 700;
+    }
+
+    .empty-column {
+        padding: 70px 10px;
+        text-align: center;
+        color: #94a3b8;
+        font-size: 11px;
+    }
+
+    .task-footer {
+        display: flex;
+        gap: 18px;
+        flex-wrap: wrap;
+        margin-top: 18px;
+    }
+
+    .task-footer a {
+        color: #64748b;
+        font-size: 12px;
+        text-decoration: none;
+    }
+
+    .task-footer a:hover {
+        color: #2563eb;
+        text-decoration: underline;
+    }
+
+    @media (max-width: 1050px) {
+
+        .kanban-board {
+            grid-template-columns: 1fr;
+        }
+
+        .kanban-column {
+            min-height: auto;
+        }
+
+    }
+
+    @media (max-width: 750px) {
+
+        .task-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .board-summary {
+            grid-template-columns: 1fr;
+        }
+
+    }
+
+</style>
+
+<div class="task-page">
+
+    <div class="task-header">
+
+        <div>
+
+            <h1>
+                {{ project.name }} Tasks
+            </h1>
+
+            <p>
+                Manage and track tasks for this project.
+            </p>
+
+        </div>
+
+        <div class="header-actions">
+
+            <a
+                href="{% url 'project_detail' project.id %}"
+                class="header-button"
+            >
+                Project
+            </a>
+
+            <a
+                href="{% url 'create_task' project.id %}"
+                class="header-button create-task-btn"
+            >
+                + Create Task
+            </a>
+
+        </div>
+
+    </div>
+
+    <div class="board-summary">
+
+        <div class="summary-card">
+
+            <h3>
+                To Do
+            </h3>
+
+            <div class="summary-number">
+                {{ todo_count }}
+            </div>
+
+        </div>
+
+        <div class="summary-card">
+
+            <h3>
+                In Progress
+            </h3>
+
+            <div class="summary-number">
+                {{ progress_count }}
+            </div>
+
+        </div>
+
+        <div class="summary-card">
+
+            <h3>
+                Completed
+            </h3>
+
+            <div class="summary-number">
+                {{ done_count }}
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="kanban-board">
+
+        <div class="kanban-column">
+
+            <div class="column-header">
+
+                <h2>
+                    To Do
+                </h2>
+
+                <span class="task-count">
+                    {{ todo_count }}
+                </span>
+
+            </div>
+
+            {% for task in todo_tasks %}
+
+                <div class="task-card">
+
+                    <h3>
+
+                        <a href="{% url 'task_detail' project.id task.id %}">
+                            {{ task.title }}
+                        </a>
+
+                    </h3>
+
+                    {% if task.description %}
+
+                        <p class="task-description">
+                            {{ task.description|truncatechars:120 }}
+                        </p>
+
+                    {% endif %}
+
+                    <div class="task-badges">
+
+                        <span class="badge">
+                            {{ task.get_priority_display }}
+                        </span>
+
+                        <span class="badge">
+                            {{ task.get_status_display }}
+                        </span>
+
+                    </div>
+
+                    <div class="task-meta">
+
+                        <div>
+
+                            <strong>
+                                Assigned:
+                            </strong>
+
+                            {% if task.assigned_to %}
+                                {{ task.assigned_to.username }}
+                            {% else %}
+                                Unassigned
+                            {% endif %}
+
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Due:
+                            </strong>
+
+                            {% if task.due_date %}
+
+                                <span
+                                    {% if task.due_date < today %}
+                                        class="due-overdue"
+                                    {% endif %}
+                                >
+
+                                    {{ task.due_date|date:"d M Y" }}
+
+                                    {% if task.due_date < today %}
+                                        — Overdue
+                                    {% endif %}
+
+                                </span>
+
+                            {% else %}
+
+                                No due date
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            {% empty %}
+
+                <div class="empty-column">
+                    No tasks in To Do.
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+        <div class="kanban-column">
+
+            <div class="column-header">
+
+                <h2>
+                    In Progress
+                </h2>
+
+                <span class="task-count">
+                    {{ progress_count }}
+                </span>
+
+            </div>
+
+            {% for task in progress_tasks %}
+
+                <div class="task-card">
+
+                    <h3>
+
+                        <a href="{% url 'task_detail' project.id task.id %}">
+                            {{ task.title }}
+                        </a>
+
+                    </h3>
+
+                    {% if task.description %}
+
+                        <p class="task-description">
+                            {{ task.description|truncatechars:120 }}
+                        </p>
+
+                    {% endif %}
+
+                    <div class="task-badges">
+
+                        <span class="badge">
+                            {{ task.get_priority_display }}
+                        </span>
+
+                        <span class="badge">
+                            {{ task.get_status_display }}
+                        </span>
+
+                    </div>
+
+                    <div class="task-meta">
+
+                        <div>
+
+                            <strong>
+                                Assigned:
+                            </strong>
+
+                            {% if task.assigned_to %}
+                                {{ task.assigned_to.username }}
+                            {% else %}
+                                Unassigned
+                            {% endif %}
+
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Due:
+                            </strong>
+
+                            {% if task.due_date %}
+
+                                <span
+                                    {% if task.due_date < today %}
+                                        class="due-overdue"
+                                    {% endif %}
+                                >
+
+                                    {{ task.due_date|date:"d M Y" }}
+
+                                    {% if task.due_date < today %}
+                                        — Overdue
+                                    {% endif %}
+
+                                </span>
+
+                            {% else %}
+
+                                No due date
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            {% empty %}
+
+                <div class="empty-column">
+                    No tasks in progress.
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+        <div class="kanban-column">
+
+            <div class="column-header">
+
+                <h2>
+                    Done
+                </h2>
+
+                <span class="task-count">
+                    {{ done_count }}
+                </span>
+
+            </div>
+
+            {% for task in done_tasks %}
+
+                <div class="task-card">
+
+                    <h3>
+
+                        <a href="{% url 'task_detail' project.id task.id %}">
+                            {{ task.title }}
+                        </a>
+
+                    </h3>
+
+                    {% if task.description %}
+
+                        <p class="task-description">
+                            {{ task.description|truncatechars:120 }}
+                        </p>
+
+                    {% endif %}
+
+                    <div class="task-badges">
+
+                        <span class="badge">
+                            {{ task.get_priority_display }}
+                        </span>
+
+                        <span class="badge">
+                            Completed
+                        </span>
+
+                    </div>
+
+                    <div class="task-meta">
+
+                        <div>
+
+                            <strong>
+                                Assigned:
+                            </strong>
+
+                            {% if task.assigned_to %}
+                                {{ task.assigned_to.username }}
+                            {% else %}
+                                Unassigned
+                            {% endif %}
+
+                        </div>
+
+                        <div class="due-completed">
+
+                            <strong>
+                                Status:
+                            </strong>
+
+                            Completed
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            {% empty %}
+
+                <div class="empty-column">
+                    No completed tasks.
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+    <div class="task-footer">
+
+        <a href="{% url 'project_detail' project.id %}">
+            ← Back to Project
+        </a>
+
+        <a href="{% url 'my_tasks' %}">
+            My Tasks
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}

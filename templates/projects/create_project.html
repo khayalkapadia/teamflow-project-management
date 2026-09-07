@@ -1,0 +1,422 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Create Project | TeamFlow
+{% endblock %}
+
+{% block content %}
+
+<style>
+
+    .form-page {
+        max-width: 850px;
+        margin: 0 auto;
+    }
+
+    .form-header {
+        margin-bottom: 25px;
+    }
+
+    .form-header h1 {
+        color: #111827;
+        font-size: 30px;
+        font-weight: 750;
+        letter-spacing: -0.5px;
+    }
+
+    .form-header p {
+        margin-top: 8px;
+        color: #64748b;
+        font-size: 14px;
+    }
+
+    .form-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 28px;
+
+        box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+    }
+
+    .form-section {
+        margin-bottom: 25px;
+    }
+
+    .form-section-title {
+        margin-bottom: 18px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid #eef2f7;
+
+        color: #111827;
+        font-size: 16px;
+        font-weight: 700;
+    }
+
+    .form-group {
+        margin-bottom: 18px;
+    }
+
+    .form-group:last-child {
+        margin-bottom: 0;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 7px;
+
+        color: #334155;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    input,
+    textarea,
+    select {
+        width: 100%;
+
+        padding: 11px 12px;
+
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+
+        background: white;
+        color: #111827;
+
+        font-family: inherit;
+        font-size: 13px;
+
+        outline: none;
+
+        transition: 0.15s ease;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.10);
+    }
+
+    textarea {
+        min-height: 130px;
+        resize: vertical;
+        line-height: 1.6;
+    }
+
+    .error-message {
+        margin-bottom: 20px;
+        padding: 12px 14px;
+
+        border: 1px solid #fecaca;
+        border-radius: 8px;
+
+        background: #fef2f2;
+        color: #b91c1c;
+
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .form-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        margin-top: 25px;
+        padding-top: 20px;
+
+        border-top: 1px solid #eef2f7;
+    }
+
+    .submit-button {
+        border: none;
+        border-radius: 8px;
+
+        padding: 11px 17px;
+
+        background: #2563eb;
+        color: white;
+
+        font-family: inherit;
+        font-size: 13px;
+        font-weight: 700;
+
+        cursor: pointer;
+
+        transition: 0.15s ease;
+    }
+
+    .submit-button:hover {
+        background: #1d4ed8;
+        transform: translateY(-1px);
+    }
+
+    .cancel-button {
+        display: inline-flex;
+        align-items: center;
+
+        min-height: 40px;
+        padding: 10px 15px;
+
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+
+        background: white;
+        color: #475569;
+
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .cancel-button:hover {
+        background: #f8fafc;
+    }
+
+    @media (max-width: 650px) {
+
+        .form-card {
+            padding: 20px;
+        }
+
+        .form-row {
+            grid-template-columns: 1fr;
+            gap: 0;
+        }
+
+        .form-actions {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .submit-button,
+        .cancel-button {
+            width: 100%;
+            justify-content: center;
+        }
+
+    }
+
+</style>
+
+
+<div class="form-page">
+
+    <div class="form-header">
+
+        <h1>
+            Create Project
+        </h1>
+
+        <p>
+            Create a new project for your workspace.
+        </p>
+
+    </div>
+
+
+    <div class="form-card">
+
+        {% if error %}
+
+            <div class="error-message">
+                {{ error }}
+            </div>
+
+        {% endif %}
+
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+
+            <div class="form-section">
+
+                <div class="form-section-title">
+                    Project Details
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="name">
+                        Project Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        placeholder="Enter project name"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="description">
+                        Description
+                    </label>
+
+                    <textarea
+                        id="description"
+                        name="description"
+                        placeholder="Describe the purpose and goals of this project..."
+                    ></textarea>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-section">
+
+                <div class="form-section-title">
+                    Schedule
+                </div>
+
+
+                <div class="form-row">
+
+                    <div class="form-group">
+
+                        <label for="start_date">
+                            Start Date
+                        </label>
+
+                        <input
+                            type="date"
+                            id="start_date"
+                            name="start_date"
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="due_date">
+                            Due Date
+                        </label>
+
+                        <input
+                            type="date"
+                            id="due_date"
+                            name="due_date"
+                        >
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-section">
+
+                <div class="form-section-title">
+                    Project Settings
+                </div>
+
+
+                <div class="form-row">
+
+                    <div class="form-group">
+
+                        <label for="status">
+                            Status
+                        </label>
+
+                        <select
+                            id="status"
+                            name="status"
+                        >
+
+                            <option value="planning">
+                                Planning
+                            </option>
+
+                            <option value="active">
+                                Active
+                            </option>
+
+                            <option value="on_hold">
+                                On Hold
+                            </option>
+
+                            <option value="completed">
+                                Completed
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="priority">
+                            Priority
+                        </label>
+
+                        <select
+                            id="priority"
+                            name="priority"
+                        >
+
+                            <option value="low">
+                                Low
+                            </option>
+
+                            <option value="medium" selected>
+                                Medium
+                            </option>
+
+                            <option value="high">
+                                High
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-actions">
+
+                <button
+                    type="submit"
+                    class="submit-button"
+                >
+                    Create Project
+                </button>
+
+
+                <a
+                    href="{% url 'project_list' %}"
+                    class="cancel-button"
+                >
+                    Cancel
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

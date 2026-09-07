@@ -1,0 +1,463 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Members | {{ project.name }}
+{% endblock %}
+
+{% block content %}
+
+<style>
+
+    .members-page {
+        max-width: 1050px;
+        margin: 0 auto;
+    }
+
+    .members-header {
+        margin-bottom: 27px;
+    }
+
+    .members-header h1 {
+        color: #111827;
+        font-size: 29px;
+        font-weight: 750;
+        letter-spacing: -0.5px;
+    }
+
+    .members-header p {
+        margin-top: 8px;
+        color: #64748b;
+        font-size: 14px;
+    }
+
+    .members-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 24px;
+        margin-bottom: 20px;
+
+        box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+    }
+
+    .card-title {
+        margin-bottom: 20px;
+        color: #111827;
+        font-size: 18px;
+        font-weight: 700;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 180px auto;
+        gap: 12px;
+        align-items: end;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 7px;
+
+        color: #334155;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    input,
+    select {
+        width: 100%;
+
+        min-height: 42px;
+        padding: 10px 12px;
+
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+
+        background: white;
+        color: #111827;
+
+        font-family: inherit;
+        font-size: 13px;
+
+        outline: none;
+    }
+
+    select:focus,
+    input:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.10);
+    }
+
+    .add-button {
+        min-height: 42px;
+
+        padding: 10px 16px;
+
+        border: none;
+        border-radius: 8px;
+
+        background: #2563eb;
+        color: white;
+
+        font-family: inherit;
+        font-size: 13px;
+        font-weight: 700;
+
+        cursor: pointer;
+    }
+
+    .add-button:hover {
+        background: #1d4ed8;
+    }
+
+    .error-message {
+        margin-bottom: 18px;
+        padding: 12px 14px;
+
+        border: 1px solid #fecaca;
+        border-radius: 8px;
+
+        background: #fef2f2;
+        color: #b91c1c;
+
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .members-list {
+        margin-top: 5px;
+    }
+
+    .member-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+
+        padding: 16px 0;
+
+        border-bottom: 1px solid #eef2f7;
+    }
+
+    .member-row:last-child {
+        border-bottom: none;
+    }
+
+    .member-left {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        min-width: 0;
+    }
+
+    .member-avatar {
+        width: 40px;
+        height: 40px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        flex-shrink: 0;
+
+        border-radius: 50%;
+
+        background: #eff6ff;
+        color: #2563eb;
+
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    .member-name {
+        color: #111827;
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    .member-role {
+        margin-top: 4px;
+        color: #64748b;
+        font-size: 12px;
+    }
+
+    .member-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-shrink: 0;
+    }
+
+    .member-action {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        min-height: 34px;
+        padding: 7px 11px;
+
+        border: 1px solid #d1d5db;
+        border-radius: 7px;
+
+        background: white;
+        color: #475569;
+
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    .member-action:hover {
+        background: #f8fafc;
+    }
+
+    .remove-action {
+        color: #dc2626;
+    }
+
+    .remove-action:hover {
+        background: #fef2f2;
+        border-color: #fecaca;
+    }
+
+    .empty-members {
+        padding: 45px 10px;
+        text-align: center;
+        color: #94a3b8;
+        font-size: 13px;
+    }
+
+    .back-link {
+        display: inline-block;
+        color: #64748b;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .back-link:hover {
+        color: #2563eb;
+    }
+
+    @media (max-width: 800px) {
+
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+
+        .add-button {
+            width: 100%;
+        }
+
+    }
+
+    @media (max-width: 600px) {
+
+        .member-row {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .member-actions {
+            width: 100%;
+        }
+
+    }
+
+</style>
+
+
+<div class="members-page">
+
+    <div class="members-header">
+
+        <h1>
+            {{ project.name }} Members
+        </h1>
+
+        <p>
+            Manage the people and roles assigned to this project.
+        </p>
+
+    </div>
+
+
+    <div class="members-card">
+
+        <h2 class="card-title">
+            Add Member
+        </h2>
+
+
+        {% if error %}
+
+            <div class="error-message">
+                {{ error }}
+            </div>
+
+        {% endif %}
+
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+
+            <div class="form-row">
+
+                <div class="form-group">
+
+                    <label for="user">
+                        User
+                    </label>
+
+                    <select
+                        id="user"
+                        name="user"
+                        required
+                    >
+
+                        <option value="">
+                            Select a user
+                        </option>
+
+                        {% for user in users %}
+
+                            <option value="{{ user.id }}">
+                                {{ user.username }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="role">
+                        Role
+                    </label>
+
+                    <select
+                        id="role"
+                        name="role"
+                        required
+                    >
+
+                        <option value="manager">
+                            Manager
+                        </option>
+
+                        <option value="developer" selected>
+                            Developer
+                        </option>
+
+                        <option value="designer">
+                            Designer
+                        </option>
+
+                        <option value="viewer">
+                            Viewer
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="add-button"
+                >
+                    Add Member
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    <div class="members-card">
+
+        <h2 class="card-title">
+            Current Members
+        </h2>
+
+
+        {% if members %}
+
+            <div class="members-list">
+
+                {% for member in members %}
+
+                    <div class="member-row">
+
+                        <div class="member-left">
+
+                            <div class="member-avatar">
+                                {{ member.user.username|first|upper }}
+                            </div>
+
+                            <div>
+
+                                <div class="member-name">
+                                    {{ member.user.username }}
+                                </div>
+
+                                <div class="member-role">
+                                    {{ member.get_role_display }}
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="member-actions">
+
+                            <a
+                                href="{% url 'edit_member' project.id member.id %}"
+                                class="member-action"
+                            >
+                                Edit Role
+                            </a>
+
+
+                            <a
+                                href="{% url 'remove_member' project.id member.id %}"
+                                class="member-action remove-action"
+                            >
+                                Remove
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="empty-members">
+                No members have been added yet.
+            </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <a
+        href="{% url 'project_detail' project.id %}"
+        class="back-link"
+    >
+        ← Back to Project
+    </a>
+
+</div>
+
+{% endblock %}

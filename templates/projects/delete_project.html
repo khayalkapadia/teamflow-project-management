@@ -1,0 +1,218 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Delete {{ project.name }} | TeamFlow
+{% endblock %}
+
+{% block content %}
+
+<style>
+
+    .delete-page {
+        max-width: 600px;
+        margin: 45px auto;
+    }
+
+    .delete-card {
+        background: white;
+        border: 1px solid #fecaca;
+        border-radius: 13px;
+
+        padding: 30px;
+
+        box-shadow: 0 8px 25px rgba(15, 23, 42, 0.06);
+    }
+
+    .warning-icon {
+        width: 50px;
+        height: 50px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        margin-bottom: 18px;
+
+        border-radius: 50%;
+
+        background: #fef2f2;
+        color: #dc2626;
+
+        font-size: 20px;
+        font-weight: bold;
+    }
+
+    .delete-card h1 {
+        margin: 0;
+        color: #111827;
+        font-size: 25px;
+    }
+
+    .delete-card h2 {
+        margin-top: 22px;
+        color: #334155;
+        font-size: 17px;
+    }
+
+    .delete-message {
+        margin-top: 9px;
+
+        color: #64748b;
+        font-size: 14px;
+        line-height: 1.7;
+    }
+
+    .warning-box {
+        margin-top: 20px;
+        padding: 13px 15px;
+
+        border-radius: 8px;
+
+        background: #fff7ed;
+        color: #9a3412;
+
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
+    .delete-actions {
+        display: flex;
+        gap: 10px;
+
+        margin-top: 25px;
+        padding-top: 20px;
+
+        border-top: 1px solid #eef2f7;
+    }
+
+    .delete-button {
+        border: none;
+        border-radius: 8px;
+
+        padding: 11px 16px;
+
+        background: #dc2626;
+        color: white;
+
+        font-family: inherit;
+        font-size: 13px;
+        font-weight: 700;
+
+        cursor: pointer;
+    }
+
+    .delete-button:hover {
+        background: #b91c1c;
+    }
+
+    .cancel-button {
+        display: inline-flex;
+        align-items: center;
+
+        padding: 10px 15px;
+
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+
+        background: white;
+        color: #475569;
+
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .cancel-button:hover {
+        background: #f8fafc;
+    }
+
+    @media (max-width: 600px) {
+
+        .delete-page {
+            margin: 20px auto;
+        }
+
+        .delete-card {
+            padding: 22px;
+        }
+
+        .delete-actions {
+            flex-direction: column;
+        }
+
+        .delete-button,
+        .cancel-button {
+            width: 100%;
+            justify-content: center;
+        }
+
+    }
+
+</style>
+
+
+<div class="delete-page">
+
+    <div class="delete-card">
+
+        <div class="warning-icon">
+            !
+        </div>
+
+
+        <h1>
+            Delete Project
+        </h1>
+
+
+        <h2>
+            {{ project.name }}
+        </h2>
+
+
+        <p class="delete-message">
+
+            Are you sure you want to permanently delete this project?
+
+            All project-related information may be removed along with it.
+
+        </p>
+
+
+        <div class="warning-box">
+
+            This action cannot be undone. Please make sure you no longer
+            need this project before continuing.
+
+        </div>
+
+
+        <form
+            method="POST"
+            class="delete-actions"
+        >
+
+            {% csrf_token %}
+
+
+            <button
+                type="submit"
+                class="delete-button"
+            >
+                Yes, Delete Project
+            </button>
+
+
+            <a
+                href="{% url 'project_detail' project.id %}"
+                class="cancel-button"
+            >
+                Cancel
+            </a>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

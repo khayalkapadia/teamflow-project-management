@@ -1,0 +1,453 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Create Task | {{ project.name }} | TeamFlow
+{% endblock %}
+
+{% block content %}
+
+<style>
+
+    .task-form-page {
+        max-width: 850px;
+        margin: 0 auto;
+    }
+
+    .task-form-header {
+        margin-bottom: 25px;
+    }
+
+    .task-form-header h1 {
+        margin: 0;
+        color: #111827;
+        font-size: 30px;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+    }
+
+    .task-form-header p {
+        margin-top: 8px;
+        color: #64748b;
+        font-size: 14px;
+    }
+
+    .project-context {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        margin-top: 13px;
+        padding: 6px 10px;
+        border-radius: 6px;
+        background: #eff6ff;
+        color: #2563eb;
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    .task-form-card {
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+        overflow: hidden;
+    }
+
+    .form-card-header {
+        padding: 20px 24px;
+        border-bottom: 1px solid #eef2f7;
+    }
+
+    .form-card-header h2 {
+        margin: 0;
+        font-size: 17px;
+        color: #111827;
+    }
+
+    .form-card-header p {
+        margin-top: 5px;
+        color: #94a3b8;
+        font-size: 12px;
+    }
+
+    .task-form {
+        padding: 25px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 7px;
+        color: #374151;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .required {
+        color: #dc2626;
+    }
+
+    .form-control {
+        display: block;
+        width: 100%;
+        padding: 11px 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        background: #ffffff;
+        color: #111827;
+        font-family: inherit;
+        font-size: 14px;
+        transition: 0.15s ease;
+    }
+
+    .form-control::placeholder {
+        color: #9ca3af;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+    }
+
+    textarea.form-control {
+        min-height: 125px;
+        resize: vertical;
+        line-height: 1.5;
+    }
+
+    select.form-control {
+        cursor: pointer;
+    }
+
+    .form-hint {
+        margin-top: 6px;
+        color: #94a3b8;
+        font-size: 11px;
+    }
+
+    .error-message {
+        margin-bottom: 22px;
+        padding: 12px 14px;
+        border: 1px solid #fecaca;
+        border-radius: 8px;
+        background: #fef2f2;
+        color: #991b1b;
+        font-size: 13px;
+    }
+
+    .form-divider {
+        height: 1px;
+        margin: 25px 0;
+        background: #eef2f7;
+    }
+
+    .form-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 25px;
+    }
+
+    .primary-button,
+    .secondary-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 42px;
+        padding: 10px 17px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        transition: 0.15s ease;
+    }
+
+    .primary-button {
+        border: 1px solid #2563eb;
+        background: #2563eb;
+        color: #ffffff;
+    }
+
+    .primary-button:hover {
+        background: #1d4ed8;
+        border-color: #1d4ed8;
+        transform: translateY(-1px);
+    }
+
+    .secondary-button {
+        border: 1px solid #d1d5db;
+        background: #ffffff;
+        color: #475569;
+    }
+
+    .secondary-button:hover {
+        background: #f8fafc;
+        border-color: #cbd5e1;
+    }
+
+    .back-link {
+        margin-top: 18px;
+    }
+
+    .back-link a {
+        color: #64748b;
+        font-size: 12px;
+        text-decoration: none;
+    }
+
+    .back-link a:hover {
+        color: #2563eb;
+        text-decoration: underline;
+    }
+
+    @media (max-width: 700px) {
+
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+
+        .task-form {
+            padding: 20px;
+        }
+
+        .form-actions {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .primary-button,
+        .secondary-button {
+            width: 100%;
+        }
+
+    }
+
+</style>
+
+<div class="task-form-page">
+
+    <div class="task-form-header">
+
+        <h1>Create Task</h1>
+
+        <p>
+            Create a new task and assign it to a project member.
+        </p>
+
+        <div class="project-context">
+            Project · {{ project.name }}
+        </div>
+
+    </div>
+
+    <div class="task-form-card">
+
+        <div class="form-card-header">
+
+            <h2>
+                Task Information
+            </h2>
+
+            <p>
+                Add the details needed to track this task.
+            </p>
+
+        </div>
+
+        <form method="POST" class="task-form">
+
+            {% csrf_token %}
+
+            {% if error %}
+
+                <div class="error-message">
+                    {{ error }}
+                </div>
+
+            {% endif %}
+
+            <div class="form-group">
+
+                <label class="form-label" for="title">
+                    Task Title <span class="required">*</span>
+                </label>
+
+                <input
+                    class="form-control"
+                    type="text"
+                    id="title"
+                    name="title"
+                    placeholder="Enter task title"
+                    required
+                >
+
+            </div>
+
+            <div class="form-group">
+
+                <label class="form-label" for="description">
+                    Description
+                </label>
+
+                <textarea
+                    class="form-control"
+                    id="description"
+                    name="description"
+                    placeholder="Describe what needs to be completed..."
+                ></textarea>
+
+                <div class="form-hint">
+                    Add useful details so the assigned member understands the task.
+                </div>
+
+            </div>
+
+            <div class="form-row">
+
+                <div class="form-group">
+
+                    <label class="form-label" for="assigned_to">
+                        Assign To
+                    </label>
+
+                    <select
+                        class="form-control"
+                        id="assigned_to"
+                        name="assigned_to"
+                    >
+
+                        <option value="">
+                            Unassigned
+                        </option>
+
+                        {% for member in members %}
+
+                            <option value="{{ member.user.id }}">
+                                {{ member.user.username }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label class="form-label" for="status">
+                        Status
+                    </label>
+
+                    <select
+                        class="form-control"
+                        id="status"
+                        name="status"
+                    >
+
+                        <option value="todo" selected>
+                            To Do
+                        </option>
+
+                        <option value="in_progress">
+                            In Progress
+                        </option>
+
+                        <option value="done">
+                            Done
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+            <div class="form-row">
+
+                <div class="form-group">
+
+                    <label class="form-label" for="priority">
+                        Priority
+                    </label>
+
+                    <select
+                        class="form-control"
+                        id="priority"
+                        name="priority"
+                    >
+
+                        <option value="low">
+                            Low
+                        </option>
+
+                        <option value="medium" selected>
+                            Medium
+                        </option>
+
+                        <option value="high">
+                            High
+                        </option>
+
+                    </select>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label class="form-label" for="due_date">
+                        Due Date
+                    </label>
+
+                    <input
+                        class="form-control"
+                        type="date"
+                        id="due_date"
+                        name="due_date"
+                    >
+
+                </div>
+
+            </div>
+
+            <div class="form-divider"></div>
+
+            <div class="form-actions">
+
+                <button type="submit" class="primary-button">
+                    Create Task
+                </button>
+
+                <a
+                    href="{% url 'task_board' project.id %}"
+                    class="secondary-button"
+                >
+                    Cancel
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+    <div class="back-link">
+
+        <a href="{% url 'project_detail' project.id %}">
+            ← Back to Project
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}

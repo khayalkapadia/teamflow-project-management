@@ -1,0 +1,270 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Edit Member | {{ project.name }}
+{% endblock %}
+
+{% block content %}
+
+<style>
+
+    .member-form-page {
+        max-width: 650px;
+        margin: 0 auto;
+    }
+
+    .member-form-header {
+        margin-bottom: 25px;
+    }
+
+    .member-form-header h1 {
+        color: #111827;
+        font-size: 29px;
+        font-weight: 750;
+    }
+
+    .member-form-header p {
+        margin-top: 8px;
+        color: #64748b;
+        font-size: 14px;
+    }
+
+    .member-form-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 27px;
+
+        box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+    }
+
+    .member-profile {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+
+        padding-bottom: 22px;
+        margin-bottom: 22px;
+
+        border-bottom: 1px solid #eef2f7;
+    }
+
+    .member-avatar {
+        width: 46px;
+        height: 46px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 50%;
+
+        background: #eff6ff;
+        color: #2563eb;
+
+        font-size: 17px;
+        font-weight: 700;
+    }
+
+    .member-name {
+        color: #111827;
+        font-size: 16px;
+        font-weight: 700;
+    }
+
+    .member-project {
+        margin-top: 3px;
+        color: #64748b;
+        font-size: 12px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 7px;
+
+        color: #334155;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    select {
+        width: 100%;
+
+        padding: 11px 12px;
+
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+
+        background: white;
+        color: #111827;
+
+        font-family: inherit;
+        font-size: 13px;
+
+        outline: none;
+    }
+
+    select:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.10);
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 24px;
+    }
+
+    .save-button {
+        border: none;
+        border-radius: 8px;
+
+        padding: 11px 17px;
+
+        background: #2563eb;
+        color: white;
+
+        font-family: inherit;
+        font-size: 13px;
+        font-weight: 700;
+
+        cursor: pointer;
+    }
+
+    .save-button:hover {
+        background: #1d4ed8;
+    }
+
+    .cancel-button {
+        display: inline-flex;
+        align-items: center;
+
+        padding: 10px 15px;
+
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+
+        background: white;
+        color: #475569;
+
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .cancel-button:hover {
+        background: #f8fafc;
+    }
+
+</style>
+
+
+<div class="member-form-page">
+
+    <div class="member-form-header">
+
+        <h1>
+            Edit Member
+        </h1>
+
+        <p>
+            Change the role of {{ member.user.username }}.
+        </p>
+
+    </div>
+
+
+    <div class="member-form-card">
+
+        <div class="member-profile">
+
+            <div class="member-avatar">
+                {{ member.user.username|first|upper }}
+            </div>
+
+            <div>
+
+                <div class="member-name">
+                    {{ member.user.username }}
+                </div>
+
+                <div class="member-project">
+                    Member of {{ project.name }}
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+
+            <label for="role">
+                Project Role
+            </label>
+
+
+            <select
+                id="role"
+                name="role"
+            >
+
+                <option
+                    value="manager"
+                    {% if member.role == "manager" %}selected{% endif %}
+                >
+                    Manager
+                </option>
+
+                <option
+                    value="developer"
+                    {% if member.role == "developer" %}selected{% endif %}
+                >
+                    Developer
+                </option>
+
+                <option
+                    value="designer"
+                    {% if member.role == "designer" %}selected{% endif %}
+                >
+                    Designer
+                </option>
+
+                <option
+                    value="viewer"
+                    {% if member.role == "viewer" %}selected{% endif %}
+                >
+                    Viewer
+                </option>
+
+            </select>
+
+
+            <div class="form-actions">
+
+                <button
+                    type="submit"
+                    class="save-button"
+                >
+                    Save Role
+                </button>
+
+
+                <a
+                    href="{% url 'project_members' project.id %}"
+                    class="cancel-button"
+                >
+                    Cancel
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

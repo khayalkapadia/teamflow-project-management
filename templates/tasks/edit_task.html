@@ -1,0 +1,598 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Edit Task | TeamFlow
+{% endblock %}
+
+{% block content %}
+
+<style>
+
+    .edit-task-page {
+        max-width: 850px;
+        margin: 0 auto;
+    }
+
+    .edit-task-header {
+        margin-bottom: 25px;
+    }
+
+    .edit-task-header h1 {
+        margin: 0;
+        color: #111827;
+        font-size: 30px;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+    }
+
+    .edit-task-header p {
+        margin-top: 8px;
+        color: #64748b;
+        font-size: 14px;
+    }
+
+    .task-context {
+        display: inline-flex;
+        margin-top: 13px;
+        padding: 6px 10px;
+        border-radius: 6px;
+        background: #eff6ff;
+        color: #2563eb;
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    .edit-card {
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+        overflow: hidden;
+    }
+
+    .edit-card-header {
+        padding: 20px 24px;
+        border-bottom: 1px solid #eef2f7;
+    }
+
+    .edit-card-header h2 {
+        margin: 0;
+        color: #111827;
+        font-size: 17px;
+    }
+
+    .edit-card-header p {
+        margin-top: 5px;
+        color: #94a3b8;
+        font-size: 12px;
+    }
+
+    .edit-form {
+        padding: 25px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 7px;
+        color: #374151;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .form-control {
+        display: block;
+        width: 100%;
+        padding: 11px 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        background: #ffffff;
+        color: #111827;
+        font-family: inherit;
+        font-size: 14px;
+        transition: 0.15s ease;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+    }
+
+    textarea.form-control {
+        min-height: 125px;
+        resize: vertical;
+        line-height: 1.5;
+    }
+
+    select.form-control {
+        cursor: pointer;
+    }
+
+    .error-message {
+        margin-bottom: 22px;
+        padding: 12px 14px;
+        border: 1px solid #fecaca;
+        border-radius: 8px;
+        background: #fef2f2;
+        color: #991b1b;
+        font-size: 13px;
+    }
+
+    .status-only-box {
+        margin-bottom: 22px;
+        padding: 14px 16px;
+        border-radius: 8px;
+        background: #f8fafc;
+        border: 1px solid #e5e7eb;
+    }
+
+    .status-only-box strong {
+        color: #334155;
+        font-size: 13px;
+    }
+
+    .status-only-box p {
+        margin-top: 4px;
+        color: #64748b;
+        font-size: 12px;
+    }
+
+    .form-divider {
+        height: 1px;
+        margin: 25px 0;
+        background: #eef2f7;
+    }
+
+    .form-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .primary-button,
+    .secondary-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 42px;
+        padding: 10px 17px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        transition: 0.15s ease;
+    }
+
+    .primary-button {
+        border: 1px solid #2563eb;
+        background: #2563eb;
+        color: #ffffff;
+    }
+
+    .primary-button:hover {
+        background: #1d4ed8;
+        border-color: #1d4ed8;
+    }
+
+    .secondary-button {
+        border: 1px solid #d1d5db;
+        background: #ffffff;
+        color: #475569;
+    }
+
+    .secondary-button:hover {
+        background: #f8fafc;
+    }
+
+    .back-link {
+        margin-top: 18px;
+    }
+
+    .back-link a {
+        color: #64748b;
+        font-size: 12px;
+        text-decoration: none;
+    }
+
+    .back-link a:hover {
+        color: #2563eb;
+        text-decoration: underline;
+    }
+
+    @media (max-width: 700px) {
+
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+
+        .edit-form {
+            padding: 20px;
+        }
+
+        .form-actions {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .primary-button,
+        .secondary-button {
+            width: 100%;
+        }
+
+    }
+
+</style>
+
+<div class="edit-task-page">
+
+    <div class="edit-task-header">
+
+        <h1>
+            Edit Task
+        </h1>
+
+        <p>
+            Update the task information and keep your project on track.
+        </p>
+
+        <div class="task-context">
+            {{ project.name }} · {{ task.title }}
+        </div>
+
+    </div>
+
+    <div class="edit-card">
+
+        <div class="edit-card-header">
+
+            {% if status_only %}
+
+                <h2>
+                    Update Task Status
+                </h2>
+
+                <p>
+                    Update the status of your assigned task.
+                </p>
+
+            {% else %}
+
+                <h2>
+                    Task Information
+                </h2>
+
+                <p>
+                    Update the details of this task.
+                </p>
+
+            {% endif %}
+
+        </div>
+
+        <div class="edit-form">
+
+            {% if error %}
+
+                <div class="error-message">
+                    {{ error }}
+                </div>
+
+            {% endif %}
+
+            {% if status_only %}
+
+                <div class="status-only-box">
+
+                    <strong>
+                        Status update
+                    </strong>
+
+                    <p>
+                        You can update the current progress of your assigned task.
+                    </p>
+
+                </div>
+
+                <form method="POST">
+
+                    {% csrf_token %}
+
+                    <div class="form-group">
+
+                        <label
+                            class="form-label"
+                            for="status"
+                        >
+                            Status
+                        </label>
+
+                        <select
+                            class="form-control"
+                            id="status"
+                            name="status"
+                            required
+                        >
+
+                            <option
+                                value="todo"
+                                {% if task.status == "todo" %}selected{% endif %}
+                            >
+                                To Do
+                            </option>
+
+                            <option
+                                value="in_progress"
+                                {% if task.status == "in_progress" %}selected{% endif %}
+                            >
+                                In Progress
+                            </option>
+
+                            <option
+                                value="done"
+                                {% if task.status == "done" %}selected{% endif %}
+                            >
+                                Done
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="form-divider"></div>
+
+                    <div class="form-actions">
+
+                        <button
+                            type="submit"
+                            class="primary-button"
+                        >
+                            Update Status
+                        </button>
+
+                        <a
+                            href="{% url 'task_detail' project.id task.id %}"
+                            class="secondary-button"
+                        >
+                            Cancel
+                        </a>
+
+                    </div>
+
+                </form>
+
+            {% else %}
+
+                <form method="POST">
+
+                    {% csrf_token %}
+
+                    <div class="form-group">
+
+                        <label
+                            class="form-label"
+                            for="title"
+                        >
+                            Task Title
+                        </label>
+
+                        <input
+                            class="form-control"
+                            type="text"
+                            id="title"
+                            name="title"
+                            value="{{ task.title }}"
+                            required
+                        >
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label
+                            class="form-label"
+                            for="description"
+                        >
+                            Description
+                        </label>
+
+                        <textarea
+                            class="form-control"
+                            id="description"
+                            name="description"
+                        >{{ task.description }}</textarea>
+
+                    </div>
+
+                    <div class="form-row">
+
+                        <div class="form-group">
+
+                            <label
+                                class="form-label"
+                                for="assigned_to"
+                            >
+                                Assigned To
+                            </label>
+
+                            <select
+                                class="form-control"
+                                id="assigned_to"
+                                name="assigned_to"
+                            >
+
+                                <option value="">
+                                    Unassigned
+                                </option>
+
+                                {% for member in members %}
+
+                                    <option
+                                        value="{{ member.user.id }}"
+                                        {% if task.assigned_to.id == member.user.id %}
+                                            selected
+                                        {% endif %}
+                                    >
+                                        {{ member.user.username }}
+                                    </option>
+
+                                {% endfor %}
+
+                            </select>
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label
+                                class="form-label"
+                                for="status"
+                            >
+                                Status
+                            </label>
+
+                            <select
+                                class="form-control"
+                                id="status"
+                                name="status"
+                            >
+
+                                <option
+                                    value="todo"
+                                    {% if task.status == "todo" %}selected{% endif %}
+                                >
+                                    To Do
+                                </option>
+
+                                <option
+                                    value="in_progress"
+                                    {% if task.status == "in_progress" %}selected{% endif %}
+                                >
+                                    In Progress
+                                </option>
+
+                                <option
+                                    value="done"
+                                    {% if task.status == "done" %}selected{% endif %}
+                                >
+                                    Done
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+                    <div class="form-row">
+
+                        <div class="form-group">
+
+                            <label
+                                class="form-label"
+                                for="priority"
+                            >
+                                Priority
+                            </label>
+
+                            <select
+                                class="form-control"
+                                id="priority"
+                                name="priority"
+                            >
+
+                                <option
+                                    value="low"
+                                    {% if task.priority == "low" %}selected{% endif %}
+                                >
+                                    Low
+                                </option>
+
+                                <option
+                                    value="medium"
+                                    {% if task.priority == "medium" %}selected{% endif %}
+                                >
+                                    Medium
+                                </option>
+
+                                <option
+                                    value="high"
+                                    {% if task.priority == "high" %}selected{% endif %}
+                                >
+                                    High
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label
+                                class="form-label"
+                                for="due_date"
+                            >
+                                Due Date
+                            </label>
+
+                            <input
+                                class="form-control"
+                                type="date"
+                                id="due_date"
+                                name="due_date"
+                                value="{{ task.due_date|date:'Y-m-d' }}"
+                            >
+
+                        </div>
+
+                    </div>
+
+                    <div class="form-divider"></div>
+
+                    <div class="form-actions">
+
+                        <button
+                            type="submit"
+                            class="primary-button"
+                        >
+                            Save Changes
+                        </button>
+
+                        <a
+                            href="{% url 'task_detail' project.id task.id %}"
+                            class="secondary-button"
+                        >
+                            Cancel
+                        </a>
+
+                    </div>
+
+                </form>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+    <div class="back-link">
+
+        <a href="{% url 'task_detail' project.id task.id %}">
+            ← Back to Task
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}

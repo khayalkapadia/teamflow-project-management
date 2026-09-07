@@ -1,0 +1,242 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Team | TeamFlow
+{% endblock %}
+
+{% block content %}
+
+<style>
+
+    .team-page {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .team-header {
+        margin-bottom: 30px;
+    }
+
+    .team-header h1 {
+        font-size: 30px;
+        margin-bottom: 8px;
+    }
+
+    .team-header p {
+        color: #6b7280;
+    }
+
+    .project-team-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        margin-bottom: 25px;
+        overflow: hidden;
+    }
+
+    .project-header {
+        padding: 20px 25px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .project-header h2 {
+        font-size: 21px;
+        margin-bottom: 6px;
+    }
+
+    .project-header p {
+        color: #6b7280;
+    }
+
+    .member-list {
+        padding: 10px 25px;
+    }
+
+    .member {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 18px 0;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .member:last-child {
+        border-bottom: none;
+    }
+
+    .member-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .member-avatar {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background: #111827;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        text-transform: uppercase;
+    }
+
+    .member-name {
+        font-weight: bold;
+    }
+
+    .member-email {
+        color: #6b7280;
+        font-size: 14px;
+        margin-top: 4px;
+    }
+
+    .member-role {
+        padding: 6px 12px;
+        border-radius: 20px;
+        background: #f3f4f6;
+        font-size: 13px;
+        font-weight: bold;
+    }
+
+    .no-members {
+        padding: 25px;
+        color: #6b7280;
+    }
+
+    .back-link {
+        margin-top: 20px;
+    }
+
+    @media (max-width: 700px) {
+
+        .member {
+            align-items: flex-start;
+            gap: 15px;
+            flex-direction: column;
+        }
+
+    }
+
+</style>
+
+
+<div class="team-page">
+
+    <div class="team-header">
+
+        <h1>Team</h1>
+
+        <p>
+            View the members working on your projects.
+        </p>
+
+    </div>
+
+
+    {% if projects %}
+
+        {% for project in projects %}
+
+            <div class="project-team-card">
+
+                <div class="project-header">
+
+                    <h2>
+                        {{ project.name }}
+                    </h2>
+
+                    <p>
+                        Project team
+                    </p>
+
+                </div>
+
+
+                {% if project.members.all %}
+
+                    <div class="member-list">
+
+                        {% for member in project.members.all %}
+
+                            <div class="member">
+
+                                <div class="member-info">
+
+                                    <div class="member-avatar">
+
+                                        {{ member.user.username|first }}
+
+                                    </div>
+
+                                    <div>
+
+                                        <div class="member-name">
+                                            {{ member.user.username }}
+                                        </div>
+
+                                        <div class="member-email">
+                                            {{ member.user.email }}
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="member-role">
+
+                                    {{ member.get_role_display }}
+
+                                </div>
+
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                {% else %}
+
+                    <div class="no-members">
+
+                        No members have been added to this project yet.
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        <div class="content-card">
+
+            <h2>
+                No Projects
+            </h2>
+
+            <p style="margin-top: 10px; color: #6b7280;">
+                You don't have any projects yet.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+
+    <div class="back-link">
+
+        <a href="{% url 'dashboard' %}">
+            ← Back to Dashboard
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}
